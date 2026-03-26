@@ -1,4 +1,4 @@
-# 🚀 Usagi
+# 🐰 Usagi
 
 **The Zero-Config API Integration Testing Suite for Node.js.**
 
