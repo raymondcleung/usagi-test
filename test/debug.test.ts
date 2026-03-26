@@ -66,17 +66,16 @@ describe('Usagi Trace (Debug Mode)', () => {
   it('should log ⚠️ [WARN] for unhandled requests in debug mode', async () => {
     process.env.USAGI_DEBUG = 'true';
     
-    // We wrap this in a try/catch because we expect the fetch to fail 
-    // at the network level (since the URL doesn't exist).
-    // Our goal is to see if Usagi LOGGED the warning before the crash.
-    try {
-      await fetch('https://unmocked-external-service.com');
-    } catch {
-      // We ignore the network error (ENOTFOUND)
-    }
+    // 1. Use an external URL so MSW doesn't silently bypass it via the localhost rule
+    const unmockedUrl = 'https://jsonplaceholder.typicode.com/unmocked-trace-test';
 
+    // 2. Fetch it. Since it's external, it will pass through MSW, 
+    // trigger the Usagi WARN trace, and then hit the real network (returning a 404)
+    await fetch(unmockedUrl);
+
+    // 3. Verify Usagi logged the trace
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('⚠️ [WARN] Unhandled outbound request')
+      expect.stringContaining(`⚠️ [WARN] Unhandled outbound request: GET ${unmockedUrl}`)
     );
   });
 });

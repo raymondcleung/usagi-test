@@ -19,8 +19,10 @@ const emitTrace = (type: 'MOCK' | 'WARN', message: string) => {
 };
 
 const createHandler = (method: keyof typeof http) => (url: string, resolver: InterceptResolver) => {
+// Ensure we aren't double-prefixing if the user provides a full URL
+  const targetUrl = url.startsWith('http') ? url : `*${url}`;
   server.use(
-    (http[method] as any)(url, async ({ request }: any) => {
+    (http[method] as any)(targetUrl, async ({ request }: any) => {
       let body = {};
       try {
         const contentType = request.headers.get('content-type');
@@ -56,11 +58,14 @@ export const intercept = {
   _start: () => server.listen({ 
     onUnhandledRequest: (req) => {
       const url = new URL(req.url);
-      // Ignore local traffic
+      
+      // Allow local unit tests to bypass
       if (url.hostname === '127.0.0.1' || url.hostname === 'localhost') return;
       
+      // Log the Usagi trace, but DO NOT throw an error. 
+      // This allows real requests to reach the real internet.
       emitTrace('WARN', `Unhandled outbound request: ${req.method} ${req.url}`);
-    } 
+    }
   }),
   _stop: () => server.close(),
   reset: () => server.resetHandlers(),
