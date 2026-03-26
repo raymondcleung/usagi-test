@@ -2,7 +2,7 @@ import { it, expect, describe, vi, beforeEach, afterEach, beforeAll, afterAll } 
 import { intercept } from '../src/interceptor.js';
 import { retry } from '../src/utils/time.js';
 
-describe('Athena Trace (Debug Mode)', () => {
+describe('Usagi Trace (Debug Mode)', () => {
   const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
   // CRITICAL: Start the interceptor for this test suite
@@ -19,11 +19,11 @@ describe('Athena Trace (Debug Mode)', () => {
     vi.clearAllMocks();
     intercept.reset();
     // Reset the debug env var before each test
-    delete process.env.ATHENA_DEBUG;
+    delete process.env.USAGI_DEBUG;
   });
 
   afterEach(() => {
-    delete process.env.ATHENA_DEBUG;
+    delete process.env.USAGI_DEBUG;
   });
 
   it('should NOT log traces when debug mode is disabled', async () => {
@@ -34,8 +34,8 @@ describe('Athena Trace (Debug Mode)', () => {
     expect(consoleSpy).not.toHaveBeenCalled();
   });
 
-  it('should log 🛡️ [MOCK] traces when ATHENA_DEBUG is true', async () => {
-    process.env.ATHENA_DEBUG = 'true';
+  it('should log 🛡️ [MOCK] traces when USAGI_DEBUG is true', async () => {
+    process.env.USAGI_DEBUG = 'true';
     
     intercept.get('https://api.test.com/trace', () => ({ ok: true }));
     
@@ -47,7 +47,7 @@ describe('Athena Trace (Debug Mode)', () => {
   });
 
   it('should log 🔄 [RETRY] traces during utility failures', async () => {
-    process.env.ATHENA_DEBUG = 'true';
+    process.env.USAGI_DEBUG = 'true';
 
     const flakyTask = vi.fn().mockRejectedValue(new Error('Fail'));
 
@@ -64,11 +64,11 @@ describe('Athena Trace (Debug Mode)', () => {
   });
 
   it('should log ⚠️ [WARN] for unhandled requests in debug mode', async () => {
-    process.env.ATHENA_DEBUG = 'true';
+    process.env.USAGI_DEBUG = 'true';
     
     // We wrap this in a try/catch because we expect the fetch to fail 
     // at the network level (since the URL doesn't exist).
-    // Our goal is to see if Athena LOGGED the warning before the crash.
+    // Our goal is to see if Usagi LOGGED the warning before the crash.
     try {
       await fetch('https://unmocked-external-service.com');
     } catch {

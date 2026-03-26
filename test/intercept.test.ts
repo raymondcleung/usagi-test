@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { intercept } from '../src/index.js'; 
 
-describe('Athena Interceptor', () => {
+describe('Usagi Interceptor', () => {
   beforeEach(() => {
     intercept.reset();
   });
 
   it('should intercept a basic GET request', async () => {
-    const mockData = { id: 1, name: 'Athena' };
+    const mockData = { id: 1, name: 'Usagi' };
     intercept.get('https://api.example.com/data', () => mockData);
 
     const response = await fetch('https://api.example.com/data');

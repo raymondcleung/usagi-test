@@ -19,7 +19,7 @@ describe('initAction', () => {
     await initAction();
     
     expect(writeFileSync).toHaveBeenCalledWith(
-      expect.stringContaining('athena.config.ts'),
+      expect.stringContaining('usagi.config.ts'),
       expect.stringContaining('defineConfig')
     );
   });

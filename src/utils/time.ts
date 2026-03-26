@@ -24,7 +24,7 @@ export const waitUntil = async (
     await sleep(interval);
   }
 
-  throw new Error(`[Athena] waitUntil timed out after ${timeout}ms`);
+  throw new Error(`[Usagi] waitUntil timed out after ${timeout}ms`);
 };
 
 export interface RetryOptions {
@@ -57,7 +57,7 @@ export const retry = async <T>(
         const delay = delays[i] || delays[delays.length - 1];
         
         // Live Trace Logging
-        if (process.env.ATHENA_DEBUG === 'true') {
+        if (process.env.USAGI_DEBUG === 'true') {
           const timestamp = new Date().toLocaleTimeString();
           console.log(
             `${styleText('gray', timestamp)} 🔄 [${styleText('yellow', 'RETRY')}] Attempt ${i + 1} failed. Next retry in ${delay}ms`

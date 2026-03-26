@@ -19,13 +19,13 @@ describe('CLI: skill command', () => {
     vi.clearAllMocks();
   });
 
-  it('should create the .athena directory if it is missing', () => {
+  it('should create the .usagi directory if it is missing', () => {
     (fs.existsSync as any).mockReturnValue(false);
 
     skillAction();
 
     expect(fs.mkdirSync).toHaveBeenCalledWith(
-      expect.stringContaining('.athena'),
+      expect.stringContaining('.usagi'),
       { recursive: true }
     );
   });
@@ -36,7 +36,7 @@ describe('CLI: skill command', () => {
     // Verification: Now looking for the new header and optimized content
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       expect.stringContaining('ai-skill.md'),
-      expect.stringContaining('# SYSTEM PROMPT: Athena Testing Framework Expert')
+      expect.stringContaining('# SYSTEM PROMPT: Usagi Testing Framework Expert')
     );
     
     // Verify that the new "core_syntax_rules" block exists in the output
@@ -50,7 +50,7 @@ describe('CLI: skill command', () => {
     skillAction();
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Athena AI Skill updated!')
+      expect.stringContaining('Usagi AI Skill updated!')
     );
   });
 });

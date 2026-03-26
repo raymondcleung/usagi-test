@@ -7,10 +7,10 @@ const server = setupServer();
 type InterceptResolver = (body: any) => any | Promise<any>;
 
 /**
- * Internal helper to log events when ATHENA_DEBUG is enabled
+ * Internal helper to log events when USAGI_DEBUG is enabled
  */
 const emitTrace = (type: 'MOCK' | 'WARN', message: string) => {
-  if (process.env.ATHENA_DEBUG === 'true') {
+  if (process.env.USAGI_DEBUG === 'true') {
     const timestamp = new Date().toLocaleTimeString();
     const icon = type === 'MOCK' ? '🛡️' : '⚠️';
     const color = type === 'MOCK' ? 'magenta' : 'yellow';

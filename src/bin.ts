@@ -16,7 +16,7 @@ export function __setStartVitestRunner(fn: typeof startVitest) {
 const program = new Command();
 
 program
-  .name('athena')
+  .name('usagi')
   .description(`
 Zero-config API testing suite powered by Vitest.
 
@@ -30,19 +30,19 @@ Supports all Vitest CLI options. Common options include:
   --root <path>            Project root directory
 
 Examples:
-  $ athena                    # Run all tests
-  $ athena --run              # Run once, non-watch
-  $ athena --json             # JSON output
-  $ athena -t="SMOKE"         # Filter by test name
-  $ athena --coverage         # With coverage
-  $ athena --debug            # Enable Athena trace logging
+  $ usagi                    # Run all tests
+  $ usagi --run              # Run once, non-watch
+  $ usagi --json             # JSON output
+  $ usagi -t="SMOKE"         # Filter by test name
+  $ usagi --coverage         # With coverage
+  $ usagi --debug            # Enable Usagi trace logging
 `)
   .version('1.0.0')
   .allowUnknownOption();
 
 program
   .command('init')
-  .description('Initialize Athena config')
+  .description('Initialize Usagi config')
   .action(initAction);
 
 program
@@ -52,40 +52,40 @@ program
 
 program
   .command('run [files...]')
-  .description('Run tests once (alias for athena --run)')
+  .description('Run tests once (alias for usagi --run)')
   .action(async (files) => {
-    await runAthenaTestCommand(files, {}, ['--run']);
+    await runUsagiTestCommand(files, {}, ['--run']);
   });
 
 program
   .command('watch [files...]')
-  .description('Run tests in watch mode (alias for athena --watch)')
+  .description('Run tests in watch mode (alias for usagi --watch)')
   .action(async (files) => {
-    await runAthenaTestCommand(files, {}, ['--watch']);
+    await runUsagiTestCommand(files, {}, ['--watch']);
   });
 
-export async function runAthenaTestCommand(files: string[], options: { baseUrl?: string; debug?: boolean }, vitestArgs: string[]) {
+export async function runUsagiTestCommand(files: string[], options: { baseUrl?: string; debug?: boolean }, vitestArgs: string[]) {
   const cwd = process.cwd();
 
   if (options.debug) {
-    process.env.ATHENA_DEBUG = 'true';
-    console.log(styleText('cyan', '\n🚀 Athena Trace Mode: Active'));
+    process.env.USAGI_DEBUG = 'true';
+    console.log(styleText('cyan', '\n🚀 Usagi Trace Mode: Active'));
   }
 
-  const configFiles = ['athena.config.ts', 'athena.config.js', 'athena.config.mjs'];
+  const configFiles = ['usagi.config.ts', 'usagi.config.js', 'usagi.config.mjs'];
   const foundConfig = configFiles.find(file => existsSync(resolvePath(cwd, file)));
 
-  let athenaConfig: any = {};
+  let usagiConfig: any = {};
   if (foundConfig) {
     try {
       const configPath = pathToFileURL(resolvePath(cwd, foundConfig)).href;
       const imported = await import(configPath);
-      athenaConfig = imported.default?.athena || {};
+      usagiConfig = imported.default?.usagi || {};
     } catch {}
   }
 
-  const finalBaseUrl = options.baseUrl || athenaConfig.baseUrl || 'http://localhost:3000';
-  process.env.ATHENA_BASE_URL = finalBaseUrl;
+  const finalBaseUrl = options.baseUrl || usagiConfig.baseUrl || 'http://localhost:3000';
+  process.env.USAGI_BASE_URL = finalBaseUrl;
 
   const parsed = parseCLI(['vitest', ...vitestArgs], { allowUnknownOptions: true });
 
@@ -96,8 +96,8 @@ export async function runAthenaTestCommand(files: string[], options: { baseUrl?:
     config: foundConfig,
     root: cwd,
     provide: {
-      athena: {
-        ...athenaConfig,
+      usagi: {
+        ...usagiConfig,
         baseUrl: finalBaseUrl,
       }
     }
@@ -113,11 +113,11 @@ export async function runAthenaTestCommand(files: string[], options: { baseUrl?:
 program
   .argument('[files...]', 'Test files to run')
   .option('--baseUrl <url>', 'Override the Base URL')
-  .option('--debug', 'Enable Athena Trace')
+  .option('--debug', 'Enable Usagi Trace')
   .action(async (files, options) => {
     const actualFiles = files.filter((f: string) => !f.startsWith('-'));
     const vitestArgs = files.filter((f: string) => f.startsWith('-'));
-    await runAthenaTestCommand(actualFiles, options, vitestArgs);
+    await runUsagiTestCommand(actualFiles, options, vitestArgs);
   });
 
 program.parse();

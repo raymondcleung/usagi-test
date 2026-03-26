@@ -1,15 +1,15 @@
-# 🚀 Athena
+# 🚀 Usagi
 
 **The Zero-Config API Integration Testing Suite for Node.js.**
 
-Athena is a high-performance, batteries-included testing SDK built on top of **Vitest** and **Supertest**. It eliminates "decision fatigue" by providing a unified entry point for API assertions, smart retries, and network interception.
+Usagi is a high-performance, batteries-included testing SDK built on top of **Vitest** and **Supertest**. It eliminates "decision fatigue" by providing a unified entry point for API assertions, smart retries, and network interception.
 
-## 🌟 Why Athena?
+## 🌟 Why Usagi?
 
-Modern Node.js testing often requires manual wiring of multiple libraries. Athena solves this by offering:
+Modern Node.js testing often requires manual wiring of multiple libraries. Usagi solves this by offering:
 
-* **Unified API**: `import { test, expect, request, retry, waitUntil, sleep, faker, intercept } from 'athena-test'`—one import to rule them all.
-* **Zero-Config Startup**: Get a professional testing environment running in seconds with `npx athena init`.
+* **Unified API**: `import { test, expect, request, retry, waitUntil, sleep, faker, intercept } from 'usagi-test'`—one import to rule them all.
+* **Zero-Config Startup**: Get a professional testing environment running in seconds with `npx usagi init`.
 * **Identity Swapping**: Effortlessly switch between User, Admin, or Guest roles using the `.as()` helper.
 * **Network Interception**: Built-in mocking of 3rd-party APIs (Stripe, GitHub) at the network level using MSW.
 * **Smart Resilience**: Built-in `retry`, `waitUntil`, and `sleep` utilities to handle eventual consistency and async operations.
@@ -18,13 +18,13 @@ Modern Node.js testing often requires manual wiring of multiple libraries. Athen
 
 ## ⚙️ Global Configuration
 
-Create an `athena.config.ts` in your root directory to set your environment defaults. Athena automatically injects these into your test workers.
+Create an `usagi.config.ts` in your root directory to set your environment defaults. Usagi automatically injects these into your test workers.
 
 ```typescript
-import { defineConfig } from 'athena-test/config';
+import { defineConfig } from 'usagi-test/config';
 
 export default defineConfig({
-  athena: {
+  usagi: {
     baseUrl: '[https://jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com)',
     auth: {
       type: 'Bearer',
@@ -40,7 +40,7 @@ export default defineConfig({
 ## 🛠️ Key Features
 
 ### 1. Identity & Auth Priority
-Athena follows a strict priority logic to determine which headers are sent:
+Usagi follows a strict priority logic to determine which headers are sent:
 
 1. **Global Auth**: Applied automatically from config if no local override exists.
 2. **`.as(token)`**: Overwrites global auth for that specific request chain.
@@ -57,10 +57,10 @@ await request().as('user-123-token').get('/profile');
 await request().as(null).get('/public/users'); 
 ```
 
-### 2. Athena Trace (Debug Mode)
-Stop guessing why your tests are failing. Athena provides a terminal-based "Live Trace" that visualizes every network event.
+### 2. Usagi Trace (Debug Mode)
+Stop guessing why your tests are failing. Usagi provides a terminal-based "Live Trace" that visualizes every network event.
 ```bash
-npx athena --debug
+npx usagi --debug
 ```
 **Output includes:**
 * 🛡️ **[MOCK]**: Visible confirmation when an outbound call is intercepted.
@@ -68,7 +68,7 @@ npx athena --debug
 * ⚠️ **[WARN]**: Alerts for unhandled outbound requests to external domains.
 
 ### 4. Smart Resilience & Time Utilities
-Athena provides built-in utilities for handling eventual consistency and asynchronous operations.
+Usagi provides built-in utilities for handling eventual consistency and asynchronous operations.
 
 **Default Values:**
 - `retry()`: 3 retries with delays [1000, 2000, 5000]ms
@@ -105,10 +105,10 @@ await sleep(2000); // or await wait(2000);
 ```
 
 ### 5. Embedded Faker for Test Data
-Generate realistic test data without external dependencies. Athena embeds `@faker-js/faker` for instant access—no additional setup required.
+Generate realistic test data without external dependencies. Usagi embeds `@faker-js/faker` for instant access—no additional setup required.
 
 ```typescript
-import { test, expect, request, faker } from 'athena-test';
+import { test, expect, request, faker } from 'usagi-test';
 
 // Basic faker usage - works out of the box
 test('create user with minimal data', async () => {
@@ -161,70 +161,70 @@ test('generate diverse test data', async () => {
 
 ### 1. Installation
 ```bash
-npm install athena-test --save-dev
+npm install usagi-test --save-dev
 ```
 
 ### 2. Initialize
 ```bash
-npx athena init
+npx usagi init
 ```
 
 ### 3. AI-Powered Developer Experience
-Generate a context file for LLMs (like Claude or ChatGPT) to make them experts in writing Athena tests.
+Generate a context file for LLMs (like Claude or ChatGPT) to make them experts in writing Usagi tests.
 ```bash
-npx athena skill
+npx usagi skill
 ```
 
 ### 4. Run Tests
 ```bash
 # Normal run (watch mode by default)
-npx athena
+npx usagi
 
 # Run once, non-watch
-npx athena --run
+npx usagi --run
 # or
-npx athena run
+npx usagi run
 
 # Watch mode (explicit)
-npx athena --watch
+npx usagi --watch
 # or  
-npx athena watch
+npx usagi watch
 
 # With Vitest options
-npx athena --json             # JSON output
-npx athena -t="SMOKE"         # Filter by test name
-npx athena --coverage         # With coverage
-npx athena --debug            # Enable Athena trace logging
+npx usagi --json             # JSON output
+npx usagi -t="SMOKE"         # Filter by test name
+npx usagi --coverage         # With coverage
+npx usagi --debug            # Enable Usagi trace logging
 
 # Show all available options
-npx athena --help
+npx usagi --help
 ```
 
-**Note**: Athena requires **Pure ESM Mode**. Ensure your `package.json` contains `"type": "module"`.
+**Note**: Usagi requires **Pure ESM Mode**. Ensure your `package.json` contains `"type": "module"`.
 
 ---
 
 ## 📊 Test Reports & Logs
-Athena leverages Vitest's native reporting engine. To generate a static report in your root directory:
+Usagi leverages Vitest's native reporting engine. To generate a static report in your root directory:
 
 ```bash
-npx athena --reporter=json --outputFile=./logs/results.json
+npx usagi --reporter=json --outputFile=./logs/results.json
 ```
 
 For a complete list of supported Vitest options, run:
 ```bash
-npx athena --help
+npx usagi --help
 ```
 
 ---
 
 ## 🏗️ Architectural Philosophy
-Built with 15+ years of software delivery experience, Athena follows:
+Built with 15+ years of software delivery experience, Usagi follows:
 * **Inversion of Control**: Global configuration injection via Vitest `provide` for environment-agnostic tests.
-* **Stateful Chaining**: The `AthenaAgent` allows for fluent, readable test scripts.
+* **Stateful Chaining**: The `UsagiAgent` allows for fluent, readable test scripts.
 * **Network Interception**: Modern, port-free mocking via MSW.
 
 ---
 
 ## 👨‍💻 About the Author
-I am a seasoned Software Engineer in Test with over 15 years of experience. **Athena** is a demonstration of my commitment to high-quality test automation and clean code architecture.
+I am a seasoned Software Engineer in Test with over 15 years of experience. **Usagi** is a demonstration of my commitment to high-quality test automation and clean code architecture.

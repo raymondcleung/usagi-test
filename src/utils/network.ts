@@ -4,7 +4,7 @@ import { inject } from 'vitest';
 
 declare module 'vitest' {
   export interface ProvidedContext {
-    athena: {
+    usagi: {
       baseUrl?: string;
       auth?: {
         type?: 'Bearer' | 'Basic';
@@ -15,17 +15,17 @@ declare module 'vitest' {
   }
 }
 
-export interface AthenaTest extends Test {
+export interface UsagiTest extends Test {
   as(token: string | null, opts?: AsOptions): this;
 }
 
-export interface AthenaAgent {
-  get(url: string): AthenaTest;
-  post(url: string): AthenaTest;
-  put(url: string): AthenaTest;
-  delete(url: string): AthenaTest;
-  patch(url: string): AthenaTest;
-  as(token: string | null, opts?: AsOptions): AthenaAgent; 
+export interface UsagiAgent {
+  get(url: string): UsagiTest;
+  post(url: string): UsagiTest;
+  put(url: string): UsagiTest;
+  delete(url: string): UsagiTest;
+  patch(url: string): UsagiTest;
+  as(token: string | null, opts?: AsOptions): UsagiAgent; 
 }
 
 interface AsOptions {
@@ -34,16 +34,16 @@ interface AsOptions {
 }
 
 const resolveBaseUrl = () => {
-  if (process.env.ATHENA_BASE_URL) return process.env.ATHENA_BASE_URL;
-  const provided = inject('athena');
+  if (process.env.USAGI_BASE_URL) return process.env.USAGI_BASE_URL;
+  const provided = inject('usagi');
   return provided?.baseUrl || 'http://localhost:3000';
 };
 
-export const request = (target?: unknown): AthenaAgent => {
+export const request = (target?: unknown): UsagiAgent => {
   const baseUrl = resolveBaseUrl();
   // We use a fresh supertest instance per request() call to avoid state pollution
   const agent = target ? supertest(target as any) : supertest(baseUrl);
-  const globalAuth = inject('athena')?.auth;
+  const globalAuth = inject('usagi')?.auth;
 
   let activeToken: string | null | undefined;
   let activeOpts: AsOptions | undefined;
@@ -77,17 +77,17 @@ export const request = (target?: unknown): AthenaAgent => {
     return req;
   };
 
-  const createMethod = (name: string) => (url: string): AthenaTest => {
+  const createMethod = (name: string) => (url: string): UsagiTest => {
     const req = (agent as any)[name](url);
     req.as = (token: string | null, opts?: AsOptions) => applyAuth(req, token, opts);
-    return applyAuth(req) as AthenaTest;
+    return applyAuth(req) as UsagiTest;
   };
 
-  const athenaAgent: AthenaAgent = {
+  const usagiAgent: UsagiAgent = {
     as: (token: string | null, opts?: AsOptions) => {
       activeToken = token;
       activeOpts = opts;
-      return athenaAgent;
+      return usagiAgent;
     },
     get: createMethod('get'),
     post: createMethod('post'),
@@ -96,5 +96,5 @@ export const request = (target?: unknown): AthenaAgent => {
     patch: createMethod('patch'),
   };
 
-  return athenaAgent;
+  return usagiAgent;
 };

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { sleep, retry, waitUntil } from '../src/utils/time.js';
 
-describe('Athena Utils: Unit Tests', () => {
+describe('Usagi Utils: Unit Tests', () => {
   
   describe('retry()', () => {
     test('should return value on first success', async () => {

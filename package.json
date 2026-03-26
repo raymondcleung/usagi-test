@@ -1,12 +1,12 @@
 {
-  "name": "athena-test",
+  "name": "usagi-test",
   "version": "1.0.0",
   "description": "The Zero-Config API Integration Testing Suite for Node.js.",
   "author": "Raymond Leung <raycleung@gmail.com> (https://github.com/raymondcleung)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raymondcleung/athena-test"
+    "url": "https://github.com/raymondcleung/usagi-test"
   },
   "type": "module",
   "engines": {
@@ -21,7 +21,7 @@
   "module": "./dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "athena": "./dist/bin.js"
+    "usagi": "./dist/bin.js"
   },
   "exports": {
     ".": {

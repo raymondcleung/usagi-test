@@ -3,10 +3,10 @@ import express, { Request, Response } from 'express';
 import { request } from '../src/utils/network.js';
 import { Server } from 'node:http';
 
-describe('Athena Integration: BaseURL Logic', () => {
+describe('Usagi Integration: BaseURL Logic', () => {
   let server: Server;
   let baseUrl: string;
-  const originalEnvUrl = process.env.ATHENA_BASE_URL; // Save original state
+  const originalEnvUrl = process.env.USAGI_BASE_URL; // Save original state
 
   beforeAll(async () => {
     // Explicitly add <void> to the Promise constructor
@@ -23,7 +23,7 @@ describe('Athena Integration: BaseURL Logic', () => {
           baseUrl = `http://localhost:${address.port}`;
           
           // Ensure the network helper finds the dynamic port
-          process.env.ATHENA_BASE_URL = baseUrl;
+          process.env.USAGI_BASE_URL = baseUrl;
         }
         server = runningServer;
         resolve(); // Now resolve() can be called without arguments
@@ -33,7 +33,7 @@ describe('Athena Integration: BaseURL Logic', () => {
 
   afterAll(() => {
     // Restore original environment state
-    process.env.ATHENA_BASE_URL = originalEnvUrl;
+    process.env.USAGI_BASE_URL = originalEnvUrl;
     if (server) server.close();
   });
 

@@ -3,22 +3,22 @@ import path from 'node:path';
 import { styleText } from 'node:util';
 
 export const skillAction = () => {
-  const targetDir = path.join(process.cwd(), '.athena');
+  const targetDir = path.join(process.cwd(), '.usagi');
   const skillPath = path.join(targetDir, 'ai-skill.md');
   
   const content = `
-# SYSTEM PROMPT: Athena Testing Framework Expert
+# SYSTEM PROMPT: Usagi Testing Framework Expert
 
-You are an expert AI assistant specialized in the **Athena API Testing Framework**. Your goal is to help users write high-quality, resilient, and readable API integration tests.
+You are an expert AI assistant specialized in the **Usagi API Testing Framework**. Your goal is to help users write high-quality, resilient, and readable API integration tests.
 
 <prerequisites>
-- **Pure ESM Mode**: Athena-Test requires the project to be an ES Module. Ensure \`package.json\` contains \`"type": "module"\`.
-- **TypeScript Config**: Use \`athena.config.ts\` for framework configuration, including \`baseUrl\` and \`auth\`.
+- **Pure ESM Mode**: Usagi-Test requires the project to be an ES Module. Ensure \`package.json\` contains \`"type": "module"\`.
+- **TypeScript Config**: Use \`usagi.config.ts\` for framework configuration, including \`baseUrl\` and \`auth\`.
 </prerequisites>
 
 <framework_capabilities>
 - **Inbound Testing**: Uses \`request()\` to test local or remote APIs.
-- **Global Auth**: Automatically applies credentials from \`athena.config.ts\` to all requests unless overridden.
+- **Global Auth**: Automatically applies credentials from \`usagi.config.ts\` to all requests unless overridden.
 - **Identity Swapping**: Uses \`.as(token)\` to handle RBAC testing.
 - **Clean Requests**: Uses \`.as(null)\` to explicitly strip all auth headers for public APIs (essential for ReqRes/JSONPlaceholder).
 - **Network Interception**: Uses \`intercept\` to mock 3rd-party services.
@@ -28,7 +28,7 @@ You are an expert AI assistant specialized in the **Athena API Testing Framework
 </framework_capabilities>
 
 <core_syntax_rules>
-1. **Unified Imports**: Always use \`import { request, test, expect, intercept, retry } from 'athena-test';\`
+1. **Unified Imports**: Always use \`import { request, test, expect, intercept, retry } from 'usagi-test';\`
 2. **Auth Hierarchy**: 
    - No \`.as()\`: Uses Global Auth from config.
    - \`.as(token)\`: Overrides Global Auth with specific credentials.
@@ -40,10 +40,10 @@ You are an expert AI assistant specialized in the **Athena API Testing Framework
 <code_examples>
 ### Example: Testing Public vs Private Endpoints
 \`\`\`typescript
-import { test, expect, request } from 'athena-test';
+import { test, expect, request } from 'usagi-test';
 
 test('auth priority demo', async () => {
-  // 1. Uses Global Auth from athena.config.ts automatically
+  // 1. Uses Global Auth from usagi.config.ts automatically
   await request().get('/admin/dashboard');
 
   // 2. Overrides Global Auth for a specific user
@@ -56,7 +56,7 @@ test('auth priority demo', async () => {
 </code_examples>
 
 <constraints>
-- Do NOT suggest using \`jest.mock\` or \`nock\`; Athena uses the built-in \`intercept\`.
+- Do NOT suggest using \`jest.mock\` or \`nock\`; Usagi uses the built-in \`intercept\`.
 - Prioritize the \`.as(null)\` pattern when users encounter 403 errors on public APIs.
 </constraints>
   `.trim();
@@ -64,7 +64,7 @@ test('auth priority demo', async () => {
   try {
     if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
     fs.writeFileSync(skillPath, content);
-    console.log(styleText('green', '\n✔ Athena AI Skill updated!'));
+    console.log(styleText('green', '\n✔ Usagi AI Skill updated!'));
   } catch (err) {
     console.error(styleText('red', `\n✘ Failed to update skill file: ${err}`));
   }

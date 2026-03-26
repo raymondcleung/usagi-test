@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { existsSync, writeFileSync } from 'fs';
 
-const DEFAULT_CONFIG = `import { defineConfig } from 'athena-test/config';
+const DEFAULT_CONFIG = `import { defineConfig } from 'usagi-test/config';
 
 export default defineConfig({
   test: {
@@ -9,7 +9,7 @@ export default defineConfig({
     environment: 'node',
     include: ['test/**/*.test.ts', 'src/**/*.test.ts'],
   },
-  athena: {
+  usagi: {
     baseUrl: 'http://localhost:3000',
   }
 });
@@ -17,16 +17,16 @@ export default defineConfig({
 
 export async function initAction() {
   const cwd = process.cwd();
-  const configPath = resolve(cwd, 'athena.config.ts');
+  const configPath = resolve(cwd, 'usagi.config.ts');
   
   if (existsSync(configPath)) {
-    console.log('⚠️  athena.config.ts already exists. Skipping init.');
+    console.log('⚠️  usagi.config.ts already exists. Skipping init.');
     return;
   }
   
   try {
     writeFileSync(configPath, DEFAULT_CONFIG);
-    console.log('✅ Created athena.config.ts successfully!');
+    console.log('✅ Created usagi.config.ts successfully!');
   } catch (err) {
     console.error('❌ Failed to create config:', err);
     process.exit(1);
