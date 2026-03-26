@@ -81,7 +81,7 @@ export async function runAthenaTestCommand(files: string[], options: { baseUrl?:
       const configPath = pathToFileURL(resolvePath(cwd, foundConfig)).href;
       const imported = await import(configPath);
       athenaConfig = imported.default?.athena || {};
-    } catch (e) {}
+    } catch {}
   }
 
   const finalBaseUrl = options.baseUrl || athenaConfig.baseUrl || 'http://localhost:3000';

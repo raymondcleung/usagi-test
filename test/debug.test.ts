@@ -54,7 +54,7 @@ describe('Athena Trace (Debug Mode)', () => {
     try {
       // Use short delays to keep tests fast
       await retry(flakyTask, { retries: 1, delays: [5] });
-    } catch (e) {
+    } catch {
       // Expected failure
     }
 
@@ -71,7 +71,7 @@ describe('Athena Trace (Debug Mode)', () => {
     // Our goal is to see if Athena LOGGED the warning before the crash.
     try {
       await fetch('https://unmocked-external-service.com');
-    } catch (e) {
+    } catch {
       // We ignore the network error (ENOTFOUND)
     }
 

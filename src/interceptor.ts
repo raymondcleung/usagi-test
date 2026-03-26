@@ -27,7 +27,7 @@ const createHandler = (method: keyof typeof http) => (url: string, resolver: Int
         if (contentType?.includes('application/json')) {
           body = await request.json();
         }
-      } catch (e) {
+      } catch {
         body = {};
       }
 

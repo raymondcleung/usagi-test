@@ -1,4 +1,4 @@
-import { ViteUserConfig, defineConfig as vitestDefineConfig } from 'vitest/config';
+import { ViteUserConfig } from 'vitest/config';
 
 export interface AthenaOptions {
   /** * The base URL used for request() calls when no target is provided.
