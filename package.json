@@ -1,6 +1,6 @@
 {
   "name": "usagi-test",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The Zero-Config API Integration Testing Suite for Node.js.",
   "author": "Raymond Leung <raycleung@gmail.com> (https://github.com/raymondcleung)",
   "license": "MIT",
