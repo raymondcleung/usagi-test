@@ -1,4 +1,5 @@
 # 🐰 Usagi
+[![npm version](https://img.shields.io/npm/v/usagi-test.svg)](https://www.npmjs.com/package/usagi-test)
 
 **The Zero-Config API Integration Testing Suite for Node.js.**
 
