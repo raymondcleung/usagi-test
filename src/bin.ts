@@ -23,21 +23,22 @@ Zero-config API testing suite powered by Vitest.
 Supports all Vitest CLI options. Common options include:
   --run                    Run tests once (non-watch mode)
   --watch                  Run tests in watch mode
-  --reporter <name>       Specify reporter (json, verbose, etc.)
+  --reporter <name>       Specify reporter (json, junit, verbose, etc.)
   --coverage               Enable coverage reporting
-  --testNamePattern <pattern> Filter tests by name pattern
+  -t, --testNamePattern <pattern> Filter tests by name pattern
   --config <path>          Path to config file
   --root <path>            Project root directory
   --baseUrl <url>          Override the Base URL for API requests
   --debug                  Enable Usagi trace logging
+  --json                   Output results in JSON format
 
 Examples:
   $ usagi                                      # Run all tests
   $ usagi --run                                # Run once, non-watch
   $ usagi --baseUrl https://staging-api.com    # Run with custom Base URL
+  $ usagi --reporter junit                     # JUnit output
   $ usagi --json                               # JSON output
   $ usagi -t="SMOKE"                           # Filter by test name
-  $ usagi --coverage                           # With coverage
   $ usagi --debug                              # Enable trace logging
 `)
   .version('1.0.0')
@@ -67,7 +68,7 @@ program
     await runUsagiTestCommand(files, {}, ['--watch']);
   });
 
-export async function runUsagiTestCommand(files: string[], options: { baseUrl?: string; debug?: boolean }, vitestArgs: string[]) {
+export async function runUsagiTestCommand(files: string[], options: { baseUrl?: string; debug?: boolean; testNamePattern?: string; reporter?: string; outputFile?: string; json?: boolean }, vitestArgs: string[]) {
   const cwd = process.cwd();
 
   if (options.debug) {
@@ -83,11 +84,7 @@ export async function runUsagiTestCommand(files: string[], options: { baseUrl?: 
     try {
       const configPath = resolvePath(cwd, foundConfig);
       const loadConfig = createJiti(cwd, { interopDefault: true });
-      
-      // ✅ Modern async import (fixes the loadConfig warning)
       const imported: any = await loadConfig.import(configPath);
-      
-      // ✅ Safely extract config (bypasses TS deprecation warnings on 'default')
       usagiConfig = imported.usagi || imported.default?.usagi || {};
     } catch (err) {
       if (options.debug) console.error('Failed to load config:', err);
@@ -97,14 +94,23 @@ export async function runUsagiTestCommand(files: string[], options: { baseUrl?: 
   // Priority Order: 1. CLI Arg | 2. Env Variable | 3. Config File
   const finalBaseUrl = options.baseUrl || process.env.USAGI_BASE_URL || usagiConfig.baseUrl;
   
-  // Only inject into the environment if a URL was actually found
   if (finalBaseUrl) {
     process.env.USAGI_BASE_URL = finalBaseUrl;
   }
 
-  const parsed = parseCLI(['vitest', ...vitestArgs], { allowUnknownOptions: true });
+  // Sync Commander captured options into the array passed to Vitest
+  const finalArgs = [...vitestArgs];
+  if (options.testNamePattern) finalArgs.push('--testNamePattern', options.testNamePattern);
+  if (options.reporter) finalArgs.push('--reporter', options.reporter);
+  if (options.outputFile) finalArgs.push('--outputFile', options.outputFile);
+  if (options.json) finalArgs.push('--json');
 
-  const cliFilters = files.length > 0 ? files : parsed.filter;
+  const parsed = parseCLI(['vitest', ...finalArgs], { allowUnknownOptions: true });
+
+  // Clean filters so flags/options aren't treated as filenames
+  const combinedFilters = [...files, ...(parsed.filter || [])];
+  const cliFilters = combinedFilters.filter(f => f && !f.startsWith('-'));
+
   const vitestOptions = {
     ...parsed.options,
     watch: parsed.options.watch || false, 
@@ -118,7 +124,8 @@ export async function runUsagiTestCommand(files: string[], options: { baseUrl?: 
     }
   };
 
-  if (parsed.options.json) {
+  // Ensure JSON reporter is active if requested via flag
+  if (options.json || parsed.options.json) {
     vitestOptions.reporters = ['json'];
   }
 
@@ -129,9 +136,16 @@ program
   .argument('[files...]', 'Test files to run')
   .option('--baseUrl <url>', 'Override the Base URL')
   .option('--debug', 'Enable Usagi Trace')
+  .option('-t, --testNamePattern <pattern>', 'Filter tests by name')
+  .option('--reporter <name>', 'Specify reporter')
+  .option('--outputFile <path>', 'Specify output file path')
+  .option('--json', 'Output results in JSON format')
   .action(async (files, options) => {
+    // Separate actual files from potential flags
     const actualFiles = files.filter((f: string) => !f.startsWith('-'));
     const vitestArgs = files.filter((f: string) => f.startsWith('-'));
+    
+    // Pass the options object so debug, json, and reporters work seamlessly
     await runUsagiTestCommand(actualFiles, options, vitestArgs);
   });
 
