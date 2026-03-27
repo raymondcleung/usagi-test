@@ -107,7 +107,7 @@ export async function runUsagiTestCommand(files: string[], options: { baseUrl?: 
   const cliFilters = files.length > 0 ? files : parsed.filter;
   const vitestOptions = {
     ...parsed.options,
-    run: true,
+    watch: parsed.options.watch || false, 
     config: foundConfig,
     root: cwd,
     provide: {
