@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raymondcleung/usagi-test"
+    "url": "git+https://github.com/raymondcleung/usagi-test.git"
   },
   "type": "module",
   "engines": {
@@ -21,7 +21,7 @@
   "module": "./dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "usagi": "./dist/bin.js"
+    "usagi": "dist/bin.js"
   },
   "exports": {
     ".": {
