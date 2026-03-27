@@ -2,9 +2,9 @@
 import { Command } from 'commander';
 import { parseCLI, startVitest } from 'vitest/node';
 import { resolve as resolvePath } from 'path';
-import { pathToFileURL } from 'url';
 import { existsSync } from 'fs';
 import { styleText } from 'node:util';
+import { createJiti } from 'jiti';
 import { initAction } from './cli/init.js';
 import { skillAction } from './cli/skill.js';
 
@@ -28,14 +28,17 @@ Supports all Vitest CLI options. Common options include:
   --testNamePattern <pattern> Filter tests by name pattern
   --config <path>          Path to config file
   --root <path>            Project root directory
+  --baseUrl <url>          Override the Base URL for API requests
+  --debug                  Enable Usagi trace logging
 
 Examples:
-  $ usagi                    # Run all tests
-  $ usagi --run              # Run once, non-watch
-  $ usagi --json             # JSON output
-  $ usagi -t="SMOKE"         # Filter by test name
-  $ usagi --coverage         # With coverage
-  $ usagi --debug            # Enable Usagi trace logging
+  $ usagi                                      # Run all tests
+  $ usagi --run                                # Run once, non-watch
+  $ usagi --baseUrl https://staging-api.com    # Run with custom Base URL
+  $ usagi --json                               # JSON output
+  $ usagi -t="SMOKE"                           # Filter by test name
+  $ usagi --coverage                           # With coverage
+  $ usagi --debug                              # Enable trace logging
 `)
   .version('1.0.0')
   .allowUnknownOption();
@@ -78,14 +81,26 @@ export async function runUsagiTestCommand(files: string[], options: { baseUrl?: 
   let usagiConfig: any = {};
   if (foundConfig) {
     try {
-      const configPath = pathToFileURL(resolvePath(cwd, foundConfig)).href;
-      const imported = await import(configPath);
-      usagiConfig = imported.default?.usagi || {};
-    } catch {}
+      const configPath = resolvePath(cwd, foundConfig);
+      const loadConfig = createJiti(cwd, { interopDefault: true });
+      
+      // ✅ Modern async import (fixes the loadConfig warning)
+      const imported: any = await loadConfig.import(configPath);
+      
+      // ✅ Safely extract config (bypasses TS deprecation warnings on 'default')
+      usagiConfig = imported.usagi || imported.default?.usagi || {};
+    } catch (err) {
+      if (options.debug) console.error('Failed to load config:', err);
+    }
   }
 
-  const finalBaseUrl = options.baseUrl || usagiConfig.baseUrl || 'http://localhost:3000';
-  process.env.USAGI_BASE_URL = finalBaseUrl;
+  // Priority Order: 1. CLI Arg | 2. Env Variable | 3. Config File
+  const finalBaseUrl = options.baseUrl || process.env.USAGI_BASE_URL || usagiConfig.baseUrl;
+  
+  // Only inject into the environment if a URL was actually found
+  if (finalBaseUrl) {
+    process.env.USAGI_BASE_URL = finalBaseUrl;
+  }
 
   const parsed = parseCLI(['vitest', ...vitestArgs], { allowUnknownOptions: true });
 

@@ -35,14 +35,22 @@ interface AsOptions {
 
 const resolveBaseUrl = () => {
   if (process.env.USAGI_BASE_URL) return process.env.USAGI_BASE_URL;
+  
   const provided = inject('usagi');
-  return provided?.baseUrl || 'http://localhost:3000';
+  if (provided?.baseUrl) return provided.baseUrl;
+
+  // Throw a clear error so the user isn't confused!
+  throw new Error(
+    "Usagi Error: No baseUrl provided. " +
+    "Please define it in usagi.config.ts, pass it via the --baseUrl CLI flag, " +
+    "or set the USAGI_BASE_URL environment variable."
+  );
 };
 
 export const request = (target?: unknown): UsagiAgent => {
-  const baseUrl = resolveBaseUrl();
-  // We use a fresh supertest instance per request() call to avoid state pollution
-  const agent = target ? supertest(target as any) : supertest(baseUrl);
+  // We use a fresh supertest instance per request() call to avoid state pollution.
+  // We ONLY resolve the Base URL if there isn't a custom target (like an Express app).
+  const agent = target ? supertest(target as any) : supertest(resolveBaseUrl());
   const globalAuth = inject('usagi')?.auth;
 
   let activeToken: string | null | undefined;
@@ -78,7 +86,17 @@ export const request = (target?: unknown): UsagiAgent => {
   };
 
   const createMethod = (name: string) => (url: string): UsagiTest => {
-    const req = (agent as any)[name](url);
+    let req;
+    
+    // If there is no custom target (like an Express app) AND the URL is absolute
+    if (!target && (url.startsWith('http://') || url.startsWith('https://'))) {
+      // Create a fresh request specifically for this absolute URL, bypassing the baseUrl
+      req = (supertest(url) as any)[name]('');
+    } else {
+      // Standard behavior: use the pre-configured agent (baseUrl or Express app target)
+      req = (agent as any)[name](url);
+    }
+
     req.as = (token: string | null, opts?: AsOptions) => applyAuth(req, token, opts);
     return applyAuth(req) as UsagiTest;
   };
