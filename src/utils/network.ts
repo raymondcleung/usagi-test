@@ -7,7 +7,7 @@ declare module 'vitest' {
     usagi: {
       baseUrl?: string;
       auth?: {
-        type?: 'Bearer' | 'Basic';
+        type?: 'Bearer' | 'Basic' | 'ApiKey' | 'None';
         value: string | (() => string);
         header?: string;
       };

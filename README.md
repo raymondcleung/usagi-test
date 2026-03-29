@@ -26,7 +26,7 @@ import { defineConfig } from 'usagi-test/config';
 
 export default defineConfig({
   usagi: {
-    baseUrl: '[https://jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com)',
+    baseUrl: 'https://placeholder.com/v1',
     auth: {
       type: 'Bearer',
       value: 'my-global-admin-token-123', // Applies to all request() calls by default
@@ -68,7 +68,7 @@ npx usagi --debug
 * 🔄 **[RETRY]**: Real-time logs of polling attempts and backoff delays.
 * ⚠️ **[WARN]**: Alerts for unhandled outbound requests to external domains.
 
-### 4. Smart Resilience & Time Utilities
+### 3. Smart Resilience & Time Utilities
 Usagi provides built-in utilities for handling eventual consistency and asynchronous operations.
 
 **Default Values:**
@@ -105,7 +105,7 @@ await waitUntil(() => {
 await sleep(2000); // or await wait(2000);
 ```
 
-### 5. Embedded Faker for Test Data
+### 4. Embedded Faker for Test Data
 Generate realistic test data without external dependencies. Usagi embeds `@faker-js/faker` for instant access—no additional setup required.
 
 ```typescript
